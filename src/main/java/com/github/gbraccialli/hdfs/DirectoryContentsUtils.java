@@ -107,7 +107,11 @@ public class DirectoryContentsUtils {
 		dir.setLength(totalLength);
 		dir.setSpaceConsumed(totalSpaceConsumed);
 		dir.setNumberOfFiles(summary.getFileCount());
-		dir.setNumberOfSubDirectories(summary.getDirectoryCount());
+		long dirCount = summary.getDirectoryCount();
+		if (dirCount > 0){
+			dirCount -= 1;
+		}
+		dir.setNumberOfSubDirectories(dirCount);
 
 		if (verbose){
 			System.err.println("Processing dir: " + dir.getFullName());
@@ -137,13 +141,18 @@ public class DirectoryContentsUtils {
 					}else if (showFiles){
 						PathInfo child = listContents(hdfs,fs.getPath(), currentLevel+1, maxLevelThreshold, minSizeThreshold, showFiles, verbose);
 						children.add(child);
+					}else{
 						files++;
 					}
 				}
 				if (!showFiles && files > 0){
-					PathInfo multipleFilesInfo = new PathInfo("(" + files + " files)", hdfs.getFileStatus(path).getPath().toUri().getPath(),
-							false,totalLength-subDirsLength,totalSpaceConsumed-subDirsSpaceConsumed,files, "multiple files entry to reduce visualization pressure");
-					children.add(multipleFilesInfo);
+					if (dirCount == 0){
+						dir.setMessage("this directory doesn't have sub-directories");
+					}else{
+						PathInfo multipleFilesInfo = new PathInfo("+(" + files + " files)", hdfs.getFileStatus(path).getPath().toUri().getPath(),
+								false,totalLength-subDirsLength,totalSpaceConsumed-subDirsSpaceConsumed,files, "this entry represents multiple files to reduce visualization pressure");
+						children.add(multipleFilesInfo);
+					}
 				}
 			}
 			dir.setChildren(children);
