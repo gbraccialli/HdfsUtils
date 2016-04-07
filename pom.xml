@@ -4,8 +4,8 @@
 	<groupId>com.github.gbraccialli</groupId>
 	<artifactId>HdfsUtils</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Hadoop HDFS CLI</name>
-	<description>Hadoop HDFS Command Line Interface</description>
+	<name>gbraccialli HDFS Utils</name>
+	<description>gbraccialli HDFS Utils</description>
 	<properties>
 		<hadoop.version>2.6.0</hadoop.version>
 		<junit.version>4.11</junit.version>
@@ -45,7 +45,7 @@
 						</goals>
 						<configuration>
 							<createSourcesJar>true</createSourcesJar>
-							<finalName>hdfs-cli-full-bin</finalName>
+							<finalName>gbraccialli-hdfs-utils-with-dependencies.jar</finalName>
 							<shadedArtifactAttached>true</shadedArtifactAttached>
 
 							<transformers>
@@ -53,7 +53,7 @@
 										implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
 								<transformer
 										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass></mainClass>
+									<mainClass>com.github.gbraccialli.hdfs.DirectoryContentsUtils</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
