@@ -7,6 +7,6 @@ java -jar target/gbraccialli-hdfs-utils-with-dependencies.jar.jar \
   --path=/ \
   --maxLevelThreshold=5  \
   --minSizeThreshold=50000  \
-  --showFiles=true   \
+  --showFiles=false   \
   --verbose=true > out.json  
 
