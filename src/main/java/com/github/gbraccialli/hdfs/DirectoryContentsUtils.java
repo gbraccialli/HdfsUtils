@@ -14,6 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class DirectoryContentsUtils {
+	
+	public static long countEntries = 0;
 
 	public static void main(String[] args) throws Exception {
 
@@ -62,12 +64,14 @@ public class DirectoryContentsUtils {
 			System.err.println("start at:" + dateFormat.format(dateStart));
 		}
 
+		countEntries = 0;
 		System.out.println(directoryInfoToJson(DirectoryContentsUtils.listContents(hdfs,hdfsPath,0,maxLevelThreshold,minSizeThreshold,showFiles,verbose)));
 
 		if (verbose){
 			Date dateEnd = new Date();
 			System.err.println();
 			System.err.println("end at:" + dateFormat.format(dateEnd));
+			System.err.println("total entries : " + countEntries);
 			System.err.println("elapsed time: " + (dateEnd.getTime() - dateStart.getTime()) / 1000.0 + " seconds") ;
 		}
 	}
@@ -87,6 +91,8 @@ public class DirectoryContentsUtils {
 
 	public static PathInfo listContents(FileSystem hdfs, Path path, int currentLevel, int maxLevelThreshold, long minSizeThreshold, boolean showFiles, boolean verbose) throws Exception{
 
+		countEntries++;
+		
 		PathInfo dir = new PathInfo();
 		ArrayList<PathInfo> children = new ArrayList<PathInfo>();
 
