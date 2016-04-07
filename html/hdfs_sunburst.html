@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+path {
+  stroke: #fff;
+  fill-rule: evenodd;
+}
+
+</style>
+<body>
+    <div id="content">
+    <table border=1>
+       <tr><td colspan=2>Details:</td></tr>
+       <tr><td>Path:</td><td><div id="path">&nbsp;</div></td></tr>
+       <tr><td>Name:</td><td><div id="name">&nbsp;</div></td></tr>
+       <tr><td>Directory:</td><td><div id="directory">&nbsp;</div></td></tr>
+       <tr><td>Size (without replicas):</td><td><div id="length">&nbsp;</div></td></tr>
+       <tr><td>Space consumed (with replicas):</td><td><div id="spaceConsumed">&nbsp;</div></td></tr>
+       <tr><td>Number of Files:</td><td><div id="files">&nbsp;</div></td></tr>
+       <tr><td>Number of Sub Directories:</td><td><div id="subdirectories">&nbsp;</div></td></tr>
+       <tr><td>Message:</td><td><div id="message">&nbsp;</div></td></tr>       
+    </table>
+    </div>
+
+<form>
+  <label><input type="radio" name="mode" value="length" checked> Size (without replicas)</label><br>
+  <label><input type="radio" name="mode" value="spaceConsumed" > Space Consumed (with replicas)</label><br>
+  <label><input type="radio" name="mode" value="numberOfFiles" > Number of files (namenode pressure)</label><br>
+</form>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var width = 960,
+    height = 700,
+    radius = Math.min(width, height) / 2;
+
+var x = d3.scale.linear()
+    .range([0, 2 * Math.PI]);
+
+var y = d3.scale.sqrt()
+    .range([0, radius]);
+
+var color = d3.scale.category20c();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+
+var partition = d3.layout.partition()
+    .sort(null)
+    .value(function(d) { return d.length; });
+
+var arc = d3.svg.arc()
+    .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
+    .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
+    .innerRadius(function(d) { return Math.max(0, y(d.y)); })
+    .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
+
+// Keep track of the node that is currently being displayed as the root.
+var node;
+
+d3.json("../out.json", function(error, root) {
+  node = root;
+  var path = svg.datum(root).selectAll("path")
+      .data(partition.nodes)
+    .enter().append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
+      .on("dblclick", dblclick)
+      .on("mouseover", mouseover)
+      .on("click", click)
+      .on("mouseout", mouseout)
+      .each(stash);
+
+
+var text = path.selectAll("text")
+            .data(partition.nodes(root))
+            .enter()
+            .append("text")
+            .attr("id", "tip")
+            .attr("x", 10)
+            .attr("y", 50)
+            .attr("font-size", "11px")
+            .style("opacity", 0);
+
+
+  d3.selectAll("input").on("change", function change() {
+    var value;
+    
+    if (this.value == "numberOfFiles")
+       value = function(d) { return d.numberOfFiles; };
+    else if (this.value == "length")
+       value = function(d) { return d.length; };
+	else
+       value = function(d) { return d.spaceConsumed; };	
+
+
+    path
+        .data(partition.value(value).nodes)
+      .transition()
+        .duration(1000)
+        .attrTween("d", arcTweenData);
+  });
+
+  function dblclick(d) {
+    node = d;
+    path.transition()
+      .duration(1000)
+      .attrTween("d", arcTweenZoom(d));
+  }
+});
+
+d3.select(self.frameElement).style("height", height + "px");
+
+// Setup for switching data: stash the old values for transition.
+function stash(d) {
+  d.x0 = d.x;
+  d.dx0 = d.dx;
+}
+
+// When switching data: interpolate the arcs in data space.
+function arcTweenData(a, i) {
+  var oi = d3.interpolate({x: a.x0, dx: a.dx0}, a);
+  function tween(t) {
+    var b = oi(t);
+    a.x0 = b.x;
+    a.dx0 = b.dx;
+    return arc(b);
+  }
+  if (i == 0) {
+   // If we are on the first arc, adjust the x domain to match the root node
+   // at the current zoom level. (We only need to do this once.)
+    var xd = d3.interpolate(x.domain(), [node.x, node.x + node.dx]);
+    return function(t) {
+      x.domain(xd(t));
+      return tween(t);
+    };
+  } else {
+    return tween;
+  }
+}
+
+// When zooming: interpolate the scales.
+function arcTweenZoom(d) {
+  var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+      yd = d3.interpolate(y.domain(), [d.y, 1]),
+      yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
+  return function(d, i) {
+    return i
+        ? function(t) { return arc(d); }
+        : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
+  };
+}
+
+
+function mouseover(d) {
+
+  d3.select(this)
+        .transition()
+        .duration(1000)
+        .ease('elastic')
+        .style("opacity", 0.3)
+		.text('TESTE');
+
+  //label.style("opacity", .9);
+  d3.select("#tip").text(d.name).style("opacity", 0.9);
+    
+};
+
+
+function click(d) {
+
+  document.getElementById("path").innerHTML = d.fullName;
+  document.getElementById("name").innerHTML = d.name;
+  document.getElementById("directory").innerHTML = d.directory;
+  document.getElementById("length").innerHTML = d.length;
+  document.getElementById("spaceConsumed").innerHTML = d.spaceConsumed;
+  document.getElementById("files").innerHTML = d.numberOfFiles;
+  document.getElementById("subdirectories").innerHTML = d.numberOfSubDirectories;
+  if (d.message == null)
+    document.getElementById("message").innerHTML = '';
+  else
+  	document.getElementById("message").innerHTML = d.message;
+    
+};
+
+
+function mouseout(d) {
+  d3.select(this)
+        .transition()
+        .duration(100)
+        .style("opacity", 1);
+
+  d3.select("#tip").text(d.name).style("opacity", 0);
+
+  
+  };
+
+</script>
