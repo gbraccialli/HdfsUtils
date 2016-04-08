@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+path {
+  stroke: #fff;
+  fill-rule: evenodd;
+}
+
+hidden {
+	border-width: 0px;
+	padding: 0px;
+	border-style: none;
+}
+
+table.gridtable {
+	font-family: verdana,arial,sans-serif;
+	font-size:11px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #666666;
+	border-collapse: collapse;
+}
+table.gridtable th {
+	border-width: 1px;
+	padding: 4px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #dedede;
+}
+table.gridtable td {
+	border-width: 1px;
+	padding: 4px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #ffffff;
+	overflow-x: scroll;
+
+nooverflow {
+	overflow-x: scroll;
+}
+}
+
+
+</style>
+<body>
+
+<table width=850 border=0>
+<form>
+	<tr>
+		<td width="500">
+			<b>HDFS Size/FileCount Exploration</b></br>
+			<div id="chartContainer" class="chart" width="500" height="500"></div>
+		</td>
+		<td width="350">
+			<p>
+				<label><input type="radio" name="mode" value="length" checked> Size (without replicas)</label><br>
+				<label><input type="radio" name="mode" value="spaceConsumed" > Space Consumed (with replicas)</label><br>
+				<label><input type="radio" name="mode" value="numberOfFiles" > Number of files (namenode pressure)</label><br>
+			</p>
+			<div style='overflow-x:scroll;overflow-y:scroll;width:345px'>
+			    <div id="content">
+			    <table class=gridtable style="width:330px">
+			       <tr><td colspan=2>Details table:</td></tr>
+			       <tr><td style='width:90px'>Path:</td><td style='width:210px'><div id="path" style="word-wrap: break-word">&nbsp;</div></td></tr>
+			       <tr><td>Name:</td><td><div id="name">&nbsp;</div></td></tr>
+			       <tr><td>Directory:</td><td><div id="directory">&nbsp;</div></td></tr>
+			       <tr><td>Size (without replicas):</td><td><div id="length">&nbsp;</div></td></tr>
+			       <tr><td>Space consumed (with replicas):</td><td><div id="spaceConsumed">&nbsp;</div></td></tr>
+			       <tr><td>Average replica count:</td><td><div id="avgReplica">&nbsp;</div></td></tr>
+			       <tr><td>Number of Files:</td><td><div id="files">&nbsp;</div></td></tr>
+			       <tr><td>Average File Size:</td><td><div id="avgSize">&nbsp;</div></td></tr>			       
+			       <tr><td>Number of Sub Directories:</td><td><div id="subdirectories">&nbsp;</div></td></tr>
+			       <tr><td>Message:</td><td><div id="message">&nbsp;</div></td></tr>       
+			    </table>
+			    </div>
+			</div>
+			<br/>
+			load json from server:<br/>
+            <input type="text" name="loadPath" value='out.json' id='loadPath'/>
+            <button  id="test_button" type="button" onclick="loadURL(document.getElementById('loadPath').value);">load</button><br/>
+			<br/>
+			<textarea lines=15 name="loadContent" id='loadContent' style="width:200px;height: 30px;">{"name":"","fullName":"/","length":1392942312,"spaceConsumed":4984132599,"numberOfFiles":892,"numberOfSubDirectories":286,"directory":true,"children":[{"name":"app-logs","fullName":"/app-logs","length":182431,"spaceConsumed":547293,"numberOfFiles":8,"numberOfSubDirectories":14,"directory":true,"children":[{"name":"hive","fullName":"/app-logs/hive","length":51093,"spaceConsumed":153279,"numberOfFiles":2,"numberOfSubDirectories":3,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"root","fullName":"/app-logs/root","length":30222,"spaceConsumed":90666,"numberOfFiles":2,"numberOfSubDirectories":3,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"zeppelin","fullName":"/app-logs/zeppelin","length":101116,"spaceConsumed":303348,"numberOfFiles":4,"numberOfSubDirectories":5,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"apps","fullName":"/apps","length":192660926,"spaceConsumed":577982778,"numberOfFiles":250,"numberOfSubDirectories":66,"directory":true,"children":[{"name":"data-mirroring","fullName":"/apps/data-mirroring","length":29170,"spaceConsumed":87510,"numberOfFiles":3,"numberOfSubDirectories":1,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"falcon","fullName":"/apps/falcon","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"hbase","fullName":"/apps/hbase","length":55629,"spaceConsumed":166887,"numberOfFiles":28,"numberOfSubDirectories":39,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"hive","fullName":"/apps/hive","length":352130,"spaceConsumed":1056390,"numberOfFiles":218,"numberOfSubDirectories":21,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"zeppelin","fullName":"/apps/zeppelin","length":192223997,"spaceConsumed":576671991,"numberOfFiles":1,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"ats","fullName":"/ats","length":503889,"spaceConsumed":1511667,"numberOfFiles":15,"numberOfSubDirectories":28,"directory":true,"children":[{"name":"active","fullName":"/ats/active","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"done","fullName":"/ats/done","length":503889,"spaceConsumed":1511667,"numberOfFiles":15,"numberOfSubDirectories":26,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"demo","fullName":"/demo","length":881591,"spaceConsumed":2644773,"numberOfFiles":10,"numberOfSubDirectories":8,"directory":true,"children":[{"name":"data","fullName":"/demo/data","length":881591,"spaceConsumed":2644773,"numberOfFiles":10,"numberOfSubDirectories":7,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"hdp","fullName":"/hdp","length":727228619,"spaceConsumed":2181685857,"numberOfFiles":8,"numberOfSubDirectories":10,"directory":true,"children":[{"name":".test","fullName":"/hdp/.test","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"apps","fullName":"/hdp/apps","length":727228619,"spaceConsumed":2181685857,"numberOfFiles":8,"numberOfSubDirectories":8,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"mapred","fullName":"/mapred","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":1,"directory":true,"children":[{"name":"system","fullName":"/mapred/system","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"mr-history","fullName":"/mr-history","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":2,"directory":true,"children":[{"name":"done","fullName":"/mr-history/done","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"tmp","fullName":"/mr-history/tmp","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"ranger","fullName":"/ranger","length":10583670,"spaceConsumed":434404194,"numberOfFiles":57,"numberOfSubDirectories":37,"directory":true,"children":[{"name":"audit","fullName":"/ranger/audit","length":10583670,"spaceConsumed":434404194,"numberOfFiles":57,"numberOfSubDirectories":36,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"spark-history","fullName":"/spark-history","length":8949172,"spaceConsumed":429499995,"numberOfFiles":30,"numberOfSubDirectories":0,"directory":true,"message":"this directory doesn\u0027t have sub-directories","children":[]},{"name":"test","fullName":"/test","length":422,"spaceConsumed":1266,"numberOfFiles":2,"numberOfSubDirectories":3,"directory":true,"children":[{"name":"geo","fullName":"/test/geo","length":422,"spaceConsumed":1266,"numberOfFiles":2,"numberOfSubDirectories":2,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]},{"name":"tmp","fullName":"/tmp","length":7705513,"spaceConsumed":23116539,"numberOfFiles":13,"numberOfSubDirectories":66,"directory":true,"children":[{"name":"asdf asdf","fullName":"/tmp/asdf asdf","length":8143,"spaceConsumed":24429,"numberOfFiles":1,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"crimes_sf","fullName":"/tmp/crimes_sf","length":3324296,"spaceConsumed":9972888,"numberOfFiles":2,"numberOfSubDirectories":2,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"entity-file-history","fullName":"/tmp/entity-file-history","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":1,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"falcon1","fullName":"/tmp/falcon1","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"falcon2","fullName":"/tmp/falcon2","length":4372983,"spaceConsumed":13118949,"numberOfFiles":9,"numberOfSubDirectories":1,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"hive","fullName":"/tmp/hive","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":56,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"+(1 files)","fullName":"/tmp","length":91,"spaceConsumed":273,"numberOfFiles":1,"numberOfSubDirectories":0,"directory":false,"message":"this entry represents multiple files to reduce visualization pressure"}]},{"name":"user","fullName":"/user","length":444246079,"spaceConsumed":1332738237,"numberOfFiles":499,"numberOfSubDirectories":39,"directory":true,"children":[{"name":"admin","fullName":"/user/admin","length":126,"spaceConsumed":378,"numberOfFiles":4,"numberOfSubDirectories":4,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"ambari-qa","fullName":"/user/ambari-qa","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"hcat","fullName":"/user/hcat","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"hdfs","fullName":"/user/hdfs","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":1,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"hive","fullName":"/user/hive","length":20733504,"spaceConsumed":62200512,"numberOfFiles":1,"numberOfSubDirectories":1,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"maria.dev1","fullName":"/user/maria.dev1","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"oozie","fullName":"/user/oozie","length":397140164,"spaceConsumed":1191420492,"numberOfFiles":485,"numberOfSubDirectories":12,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"root","fullName":"/user/root","length":20733504,"spaceConsumed":62200512,"numberOfFiles":1,"numberOfSubDirectories":3,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"solr","fullName":"/user/solr","length":35,"spaceConsumed":105,"numberOfFiles":1,"numberOfSubDirectories":2,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"spark","fullName":"/user/spark","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"unit","fullName":"/user/unit","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"yarn","fullName":"/user/yarn","length":0,"spaceConsumed":0,"numberOfFiles":0,"numberOfSubDirectories":0,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]},{"name":"zeppelin","fullName":"/user/zeppelin","length":5638746,"spaceConsumed":16916238,"numberOfFiles":7,"numberOfSubDirectories":3,"directory":true,"message":"Drill down stopped due to maxLevelThreshold achieved (2)","children":[]}]}]}</textarea><br/>
+			<button id="test_button" type="button" onclick="loadJson(document.getElementById('loadContent').value);">load</button><br/>
+		</td>
+	</tr>
+</table>
+</form>
+</body>		
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script>
+
+var width = 400,
+    height = 300,
+    radius = Math.min(width, height) / 2;
+
+var x = d3.scale.linear()
+    .range([0, 2 * Math.PI]);
+
+var y = d3.scale.sqrt()
+    .range([0, radius]);
+
+var color = d3.scale.category20c();
+
+var svg;
+var partition;
+var arc;
+var path;
+var text;
+
+function sunburstLayout(root) {
+
+    svg = d3.select('#chartContainer').append('svg')
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+
+
+
+    partition = d3.layout.partition()
+        .sort(null)
+        .value(function(d) {
+            return d.length;
+        });
+
+    arc = d3.svg.arc()
+        .startAngle(function(d) {
+            return Math.max(0, Math.min(2 * Math.PI, x(d.x)));
+        })
+        .endAngle(function(d) {
+            return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx)));
+        })
+        .innerRadius(function(d) {
+            return Math.max(0, y(d.y));
+        })
+        .outerRadius(function(d) {
+            return Math.max(0, y(d.y + d.dy));
+        });
+
+    path = svg.datum(root).selectAll("path")
+        .data(partition.nodes)
+        .enter().append("path")
+        .attr("d", arc)
+        .style("fill", function(d) {
+            return color((d.children ? d : d.parent).name);
+        })
+        .on("dblclick", dblclick)
+        .on("mouseover", mouseover)
+        .on("click", dblclick)
+        .on("mouseout", mouseout)
+        .on("mousemove", mousemove)
+        .each(stash);
+
+    text = path.selectAll("text")
+        .data(partition.nodes(root))
+        .enter()
+        .append("text")
+        .attr("id", "tip")
+        .attr("x", 10)
+        .attr("y", 50)
+        .attr("font-size", "11px")
+        .style("opacity", 0);
+
+
+    d3.selectAll("input").on("change", function change() {
+        var value;
+
+        if (this.value == "numberOfFiles")
+            value = function(d) {
+                return d.numberOfFiles;
+            };
+        else if (this.value == "length")
+            value = function(d) {
+                return d.length;
+            };
+        else
+            value = function(d) {
+                return d.spaceConsumed;
+            };
+
+
+        path
+            .data(partition.value(value).nodes)
+            .transition()
+            .duration(1000)
+            .attrTween("d", arcTweenData);
+    });
+
+    var controlPanel = $('<button/>', {
+        class: 'btn btn-sm btn-default',
+        text: 'Back To Top',
+        click: function() {
+            node = root;
+
+            path.transition()
+                .attrTween('d', arcTweenZoom(root));
+        }
+    });
+    $('#chartContainer').append(controlPanel);
+
+    function dblclick(d) {
+        node = d;
+        path.transition()
+            .duration(1000)
+            .attrTween("d", arcTweenZoom(d));
+    }
+
+}
+
+d3.select(self.frameElement).style("height", height + "px");
+
+// Setup for switching data: stash the old values for transition.
+function stash(d) {
+    d.x0 = d.x;
+    d.dx0 = d.dx;
+}
+
+// When switching data: interpolate the arcs in data space.
+function arcTweenData(a, i) {
+    var oi = d3.interpolate({
+        x: a.x0,
+        dx: a.dx0
+    }, a);
+
+    function tween(t) {
+        var b = oi(t);
+        a.x0 = b.x;
+        a.dx0 = b.dx;
+        return arc(b);
+    }
+    if (i == 0) {
+        // If we are on the first arc, adjust the x domain to match the root node
+        // at the current zoom level. (We only need to do this once.)
+        var xd = d3.interpolate(x.domain(), [node.x, node.x + node.dx]);
+        return function(t) {
+            x.domain(xd(t));
+            return tween(t);
+        };
+    } else {
+        return tween;
+    }
+}
+
+// When zooming: interpolate the scales.
+function arcTweenZoom(d) {
+    var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+        yd = d3.interpolate(y.domain(), [d.y, 1]),
+        yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
+    return function(d, i) {
+        return i ?
+
+            function(t) {
+                return arc(d);
+            } :
+            function(t) {
+                x.domain(xd(t));
+                y.domain(yd(t)).range(yr(t));
+                return arc(d);
+            };
+    };
+}
+
+
+function mouseover(d) {
+
+    d3.select(this)
+        .transition()
+        .duration(1000)
+        .ease('elastic')
+        .style("opacity", 0.3);
+
+    updateInfo(d);
+
+};
+
+function mousemove(d) {
+
+}
+
+function click(d) {
+    updateInfo(d);
+
+};
+
+function updateInfo(d) {
+    document.getElementById("path").innerHTML = d.fullName;
+    document.getElementById("name").innerHTML = d.name;
+    document.getElementById("directory").innerHTML = d.directory;
+    document.getElementById("length").innerHTML = bytesToSize(d.length) + ' (' + d.length + ' bytes)';
+    document.getElementById("avgSize").innerHTML = bytesToSize(d.length / d.numberOfFiles);
+    document.getElementById("spaceConsumed").innerHTML = bytesToSize(d.spaceConsumed) + ' (' + d.spaceConsumed + ' bytes)';
+    document.getElementById("avgReplica").innerHTML = d.spaceConsumed / d.length;
+    document.getElementById("files").innerHTML = d.numberOfFiles;
+    document.getElementById("subdirectories").innerHTML = d.numberOfSubDirectories;
+    if (d.message == null)
+        document.getElementById("message").innerHTML = '';
+    else
+        document.getElementById("message").innerHTML = d.message;
+
+}
+
+function mouseout(d) {
+    d3.select(this)
+        .transition()
+        .duration(100)
+        .style("opacity", 1);
+
+
+};
+
+function bytesToSize(bytes) {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) {
+        return '0 Byte';
+    }
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+}
+
+function clean(){
+    if ($('#chartContainer').children()) {
+        $('#chartContainer').html('');
+    }
+
+}
+
+function loadURL(path) {
+	clean();
+    d3.json(path, function(error, root) {
+        node = root;
+        sunburstLayout(node);
+    });
+}
+
+function loadJson(jsonString) {
+	clean();
+	node = JSON.parse(jsonString);
+	sunburstLayout(node);
+}
+
+var node;
+
+loadURL(document.getElementById('loadPath').value);
+
+</script>
+</html>
