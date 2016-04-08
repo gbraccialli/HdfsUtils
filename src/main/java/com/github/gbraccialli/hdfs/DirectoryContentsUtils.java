@@ -1,6 +1,7 @@
 package com.github.gbraccialli.hdfs;
 
 import java.text.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,7 +77,7 @@ public class DirectoryContentsUtils {
 		}
 	}
 
-	private static String directoryInfoToJson(PathInfo directoryInfo) {
+	public static String directoryInfoToJson(PathInfo directoryInfo) {
 		Gson gson = new GsonBuilder().create();
 		return gson.toJson(directoryInfo);
 	}
