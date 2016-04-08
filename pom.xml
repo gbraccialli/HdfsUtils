@@ -45,7 +45,7 @@
 						</goals>
 						<configuration>
 							<createSourcesJar>true</createSourcesJar>
-							<finalName>gbraccialli-hdfs-utils-with-dependencies.jar</finalName>
+							<finalName>gbraccialli-hdfs-utils-with-dependencies</finalName>
 							<shadedArtifactAttached>true</shadedArtifactAttached>
 
 							<transformers>
