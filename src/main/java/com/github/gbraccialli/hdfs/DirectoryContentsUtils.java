@@ -77,7 +77,7 @@ public class DirectoryContentsUtils {
 		}
 
 		countEntries = 0;
-		System.out.println(directoryInfoToJson(DirectoryContentsUtils.listContents(hdfs,hdfsPath,0,maxLevelThreshold,minSizeThreshold,showFiles,verbose,excludeList)));
+		directoryInfoToJson(DirectoryContentsUtils.listContents(hdfs,hdfsPath,0,maxLevelThreshold,minSizeThreshold,showFiles,verbose,excludeList),System.out);
 
 		if (verbose){
 			Date dateEnd = new Date();
@@ -88,9 +88,9 @@ public class DirectoryContentsUtils {
 		}
 	}
 
-	public static String directoryInfoToJson(PathInfo directoryInfo) {
+	public static void directoryInfoToJson(PathInfo directoryInfo, Appendable writer) {
 		Gson gson = new GsonBuilder().create();
-		return gson.toJson(directoryInfo);
+		gson.toJson(directoryInfo,writer);
 	}
 
 	public static PathInfo listContents(FileSystem hdfs, Path path) throws Exception{
