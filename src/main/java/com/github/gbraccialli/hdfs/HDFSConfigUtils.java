@@ -10,9 +10,16 @@ public class HDFSConfigUtils {
 
 	private static final String[] HADOOP_CONF_FILES = {"core-site.xml", "hdfs-site.xml"};
 
-
 	public static FileSystem loadConfigsAndGetFileSystem(String hadoopConfDirProp) throws Exception{
+		return loadConfigsAndGetFileSystem(hadoopConfDirProp, null);
+	}
 
+	public static FileSystem loadConfigsAndGetFileSystem(String hadoopConfDirProp, String doAs) throws Exception{
+
+		if (doAs != null){
+			System.setProperty("HADOOP_USER_NAME", doAs);
+		}
+		
 		Configuration config;
 		FileSystem hdfs;
 		if (hadoopConfDirProp == null)
@@ -30,6 +37,9 @@ public class HDFSConfigUtils {
 
 		try {
 			hdfs = FileSystem.get(config);
+			if (doAs != null){
+				hdfs = FileSystem.get(hdfs.getUri(),config, doAs);
+			}
 			return hdfs;
 
 		} catch (Exception e) {

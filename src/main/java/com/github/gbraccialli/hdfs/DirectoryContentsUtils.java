@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.fs.ContentSummary;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -55,14 +54,13 @@ public class DirectoryContentsUtils {
 			}
 		}
 
-		if (doAs != null){
-			System.setProperty("HADOOP_USER_NAME", doAs);
-		}
 
 		Date dateStart = new Date();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-		FileSystem hdfs = HDFSConfigUtils.loadConfigsAndGetFileSystem(confDir);
+		//System.setProperty("HADOOP_USER_NAME", doAs);
+		
+		FileSystem hdfs = HDFSConfigUtils.loadConfigsAndGetFileSystem(confDir, doAs);
 		Path hdfsPath = new Path(path);
 
 		if (verbose){
@@ -92,13 +90,20 @@ public class DirectoryContentsUtils {
 		Gson gson = new GsonBuilder().create();
 		gson.toJson(directoryInfo,writer);
 	}
+	
+	public static String directoryInfoToJson(PathInfo directoryInfo) {
+		Gson gson = new GsonBuilder().create();
+		return gson.toJson(directoryInfo);
+	}
 
 	public static PathInfo listContents(FileSystem hdfs, Path path) throws Exception{
-		return listContents(hdfs,path,0,-1,-1,false,false,null);
+		String str = null;
+		return listContents(hdfs,path,0,-1,-1,false,false,str);
 	}
 
 	public static PathInfo listContents(FileSystem hdfs, Path path, boolean verbose) throws Exception{
-		return listContents(hdfs,path,0,-1,-1,false,verbose,null);
+		String str = null;
+		return listContents(hdfs,path,0,-1,-1,false,verbose,str);
 	}
 
 	public static boolean isInExclusionList(PathInfo pathInfo, List<String> excludeList){
@@ -112,6 +117,15 @@ public class DirectoryContentsUtils {
 		}
 		return found;
 
+	}
+
+
+	public static PathInfo listContents(FileSystem hdfs, Path path, int currentLevel, int maxLevelThreshold, long minSizeThreshold, boolean showFiles, boolean verbose, String excludeList) throws Exception{
+		List<String> excludeArray = null;
+		if (excludeList!= null && excludeList.length() >0){
+			excludeArray = Arrays.asList(excludeList.split(","));
+		}
+		return listContents(hdfs,path,0,maxLevelThreshold,minSizeThreshold,showFiles,verbose,excludeArray);
 	}
 
 	public static PathInfo listContents(FileSystem hdfs, Path path, int currentLevel, int maxLevelThreshold, long minSizeThreshold, boolean showFiles, boolean verbose, List<String> excludeList) throws Exception{
