@@ -6,7 +6,7 @@ Project to help analysing HDFS metadata.
 
 ##Options to run
 ###1- Zeppelin notebook
-Just import URL below into your zeppelin:<br/>
+Just import URL below in your zeppelin instance and runs step-by-step:<br/>
 <br/>
 https://raw.githubusercontent.com/gbraccialli/HdfsUtils/master/zeppelin/hdfs-d3.json
 
