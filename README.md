@@ -58,7 +58,7 @@ PS: note Chrome browser has security contraint that does not allow you to load l
 //path1,path2,...
 //directories to exclude from drill down, for example: /tmp/,/user/ won't present information about those directories.
 
-####--doAs<br/>
+####--doAs=<br/>
 //username (hdfs for example)
 //for non-kerberized cluster, you can set user to perform hdfs operations, using hdfs you won't have permissions issues. if you are using a kerberized cluster, grant read access to user performing this operation (you can use Ranger for this) 
 
