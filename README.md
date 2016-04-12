@@ -10,6 +10,8 @@ Just import URL below in your zeppelin instance and runs step-by-step:<br/>
 <br/>
 https://raw.githubusercontent.com/gbraccialli/HdfsUtils/master/zeppelin/hdfs-d3.json
 
+###[Live Preview here](https://www.zeppelinhub.com/viewer/notebooks/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2dicmFjY2lhbGxpL0hkZnNVdGlscy9tYXN0ZXIvemVwcGVsaW4vbm90ZS5qc29u)
+
 ###2- Build from source, running in command line and using html file
 ###Building
 ```sh
