@@ -31,10 +31,10 @@ java -jar target/gbraccialli-hdfs-utils-with-dependencies.jar \
 Open html/hdfs_sunburst.html in your browser and point to  .json file you created in previous step, or copy/paste json content on right load options<br/>
 <br/>
 PS: note Chrome browser has security contraint that does not allow you to load local files, use one of the following options:
-#####a- Use zeppelin notebook (describe above)
-#####b- Use Safari
-#####c- Enable Chrome local files access: [instructions here](http://stackoverflow.com/questions/18586921/how-to-launch-html-using-chrome-at-allow-file-access-from-files-mode)
-#####d- Publish json in a webserver and use full URL
+- Use zeppelin notebook (describe above)
+- Use Safari
+- Enable Chrome local files access: [instructions here](http://stackoverflow.com/questions/18586921/how-to-launch-html-using-chrome-at-allow-file-access-from-files-mode)
+- Publish json in a webserver and use full URL
 
 
 ###Command line options:
