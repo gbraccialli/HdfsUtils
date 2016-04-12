@@ -33,7 +33,7 @@ PS: note Chrome browser has security contraint that does not allow you to load l
 #####a- Use zeppelin notebook (describe above)
 #####b- Use Safari
 #####c- Enable Chrome local files access: [instructions here](http://stackoverflow.com/questions/18586921/how-to-launch-html-using-chrome-at-allow-file-access-from-files-mode)
-#####d- Publish html in a webserver
+#####d- Publish json in a webserver and use full URL
 
 
 ###Command line options:
