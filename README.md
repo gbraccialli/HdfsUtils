@@ -2,7 +2,7 @@
 Project to help analysing HDFS metadata.
 
 - First feature is a D3 Sunburst visualization showing HDFS space usage and/or number of files
-- Snapshot space consumption overhead analyzer (from [this discussion](https://community.hortonworks.com/questions/24063/hdfs-snapshot-space-consumption-report.html) is comming next (stay tunned).
+- Snapshot space consumption overhead analyzer (from [this discussion](https://community.hortonworks.com/questions/24063/hdfs-snapshot-space-consumption-report.html) is coming next (stay tunned).
 
 ##Options to run
 ###1- Zeppelin notebook
